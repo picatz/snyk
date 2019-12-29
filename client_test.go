@@ -2,7 +2,6 @@ package snyk
 
 import (
 	"context"
-	"fmt"
 	"testing"
 )
 
@@ -12,12 +11,9 @@ func TestNewClient(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result := map[string]interface{}{}
-	err = client.RawQuery(context.TODO(), "GET", "orgs", nil, nil, &result)
-	if err != nil {
-		t.Fatal(err)
-	}
+	_, err = client.Organizations(context.TODO())
 
-	fmt.Println(result)
-	t.Log(result)
+	if err == nil {
+		t.Log("Expected an error because my plan is not entitled for api access.")
+	}
 }
