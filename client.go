@@ -74,10 +74,11 @@ func WithHTTPClient(hc *http.Client) ClientOption {
 	}
 }
 
-type apiErrorMessage struct {
-	Error struct {
-		Message string `json:"message"`
-	} `json:"error"`
+type apiError struct {
+	Error       bool   `json:"error"`
+	Message     string `json:"message"`
+	CliMessage  string `json:"cliMessage"`
+	UserMessage string `json:"userMessage"`
 }
 
 // RawQuery performs a general query against the API
@@ -108,7 +109,7 @@ func (c *Client) RawQuery(ctx context.Context, verb, path string, customHeaders 
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		errorMesg := apiErrorMessage{}
+		errorMesg := apiError{}
 
 		err = json.NewDecoder(resp.Body).Decode(&errorMesg)
 		if err != nil {
@@ -117,11 +118,11 @@ func (c *Client) RawQuery(ctx context.Context, verb, path string, customHeaders 
 
 		// if the api error is empty, use the http status string which
 		// contains some relevant information
-		if errorMesg.Error.Message == "" {
+		if errorMesg.Message == "" {
 			return fmt.Errorf("http server status: %s", resp.Status)
 		}
 
-		return fmt.Errorf("%s", errorMesg.Error.Message)
+		return fmt.Errorf("%s", errorMesg.Message)
 	}
 
 	if value != nil {
@@ -135,7 +136,7 @@ func (c *Client) RawQuery(ctx context.Context, verb, path string, customHeaders 
 }
 
 // Organizations is a collection of organization information for the API token.
-type Organizations = []struct {
+type Organizations []struct {
 	Name  string `json:"name"`
 	ID    string `json:"id"`
 	Group struct {
