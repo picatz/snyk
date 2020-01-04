@@ -22,7 +22,7 @@ import (
 )
 
 func main() {
-    client, _ := snyk.NewClient(snyk.ClientOptionTokenFromEnv("SNYK_TOKEN"))
+    client, _ := snyk.NewClient(snyk.WithTokenFromEnv("SNYK_TOKEN"))
 
     var (
         orgID = "..."
