@@ -18,7 +18,7 @@ import (
     "fmt"
     "context"
 
-    "github.com/hashicorp/security-tools/libraries/go/snyk"
+    "github.com/picatz/snyk"
 )
 
 func main() {
