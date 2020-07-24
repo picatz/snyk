@@ -353,11 +353,31 @@ type Project struct {
 	} `json:"importingUser"`
 	ImageID  string `json:"imageId,omitempty"`
 	ImageTag string `json:"imageTag,omitempty"`
+	Tags     Tags   `json:"tags"`
 }
 
 // Projects is a collection of idividual Project objects which is a package
 // that is actively tracked by Snyk.
 type Projects = []Project
+
+// Tag is a key-value object that can be saved on a Project
+type Tag struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+// Tags is a collection of Tag objects
+type Tags []Tag
+
+// ToMap returns the tags as a native map[string]string
+func (tags Tags) ToMap() map[string]string {
+	var data = map[string]string{}
+	for _, tag := range tags {
+		data[tag.Key] = tag.Value
+	}
+
+	return data
+}
 
 // OrganizationProjects gets a Projects object.
 func (c *Client) OrganizationProjects(ctx context.Context, orgID string) (Projects, error) {
@@ -384,6 +404,52 @@ func (c *Client) OrganizationProject(ctx context.Context, orgID, projectID strin
 	}
 
 	return project, nil
+}
+
+// AddProjectTag adds a tag to a given project
+func (c *Client) AddProjectTag(ctx context.Context, orgID, projectID, key, value string) (Tags, error) {
+	var (
+		tags struct {
+			Tags Tags `json:"tags"`
+		}
+		data = Tag{
+			Key:   key,
+			Value: value,
+		}
+	)
+
+	jsonBytes, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	body := bytes.NewReader(jsonBytes)
+
+	err = c.RawQuery(ctx, "POST", fmt.Sprintf("org/%s/project/%s/tags", orgID, projectID), nil, body, &tags)
+
+	return tags.Tags, err
+}
+
+// RemoveProjectTag removes a tag from a given project
+func (c *Client) RemoveProjectTag(ctx context.Context, orgID, projectID, key, value string) (Tags, error) {
+	var (
+		tags struct {
+			Tags Tags `json:"tags"`
+		}
+		data = Tag{
+			Key:   key,
+			Value: value,
+		}
+	)
+
+	jsonBytes, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	body := bytes.NewReader(jsonBytes)
+
+	err = c.RawQuery(ctx, "POST", fmt.Sprintf("org/%s/project/%s/tags/remove", orgID, projectID), nil, body, &tags)
+
+	return tags.Tags, err
 }
 
 // Vulnerabilities are  from a given project's Issues.
