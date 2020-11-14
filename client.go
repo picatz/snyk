@@ -394,7 +394,6 @@ func (c *Client) OrganizationProjects(ctx context.Context, orgID string) (Projec
 }
 
 // OrganizationProject gets a Project object.
-// NOT WORKING RIGHT NOW
 func (c *Client) OrganizationProject(ctx context.Context, orgID, projectID string) (*Project, error) {
 	project := &Project{}
 
