@@ -136,14 +136,17 @@ func (c *Client) RawQuery(ctx context.Context, verb, path string, customHeaders 
 }
 
 // Organizations is a collection of organization information for the API token.
-type Organizations []struct {
+type Organization struct {
 	Name  string `json:"name"`
 	ID    string `json:"id"`
+	Slug  string `json:"slug"`
+	Url   string `json:"url"`
 	Group struct {
 		Name string `json:"name"`
 		ID   string `json:"id"`
 	} `json:"group"`
 }
+type Organizations = []Organization
 
 // Organizations gets an Organizations object.
 func (c *Client) Organizations(ctx context.Context) (Organizations, error) {
@@ -340,9 +343,10 @@ type Project struct {
 	TestFrequency         string    `json:"testFrequency"`
 	TotalDependencies     int       `json:"totalDependencies"`
 	IssueCountsBySeverity struct {
-		Low    int `json:"low"`
-		High   int `json:"high"`
-		Medium int `json:"medium"`
+		Low      int `json:"low"`
+		High     int `json:"high"`
+		Medium   int `json:"medium"`
+		Critical int `json:"critical"`
 	} `json:"issueCountsBySeverity"`
 	LastTestedDate time.Time `json:"lastTestedDate"`
 	ImportingUser  struct {
@@ -351,12 +355,25 @@ type Project struct {
 		Username string `json:"username"`
 		Email    string `json:"email"`
 	} `json:"importingUser"`
-	ImageID  string `json:"imageId,omitempty"`
-	ImageTag string `json:"imageTag,omitempty"`
-	Tags     Tags   `json:"tags"`
+	ImageID        string `json:"imageId,omitempty"`
+	ImageTag       string `json:"imageTag,omitempty"`
+	ImageBaseImage string `json:"imageBaseImage,omitempty"`
+	ImagePlatform  string `json:"imagePlatform,omitempty"`
+	ImageCluster   string `json:"imageCluster,omitempty"`
+	Owner          struct {
+		ID       string `json:"id"`
+		Name     string `json:"name"`
+		Username string `json:"username"`
+		Email    string `json:"email"`
+	} `json:"owner"`
+	BrowseUrl       string `json:"browseUrl,omitempty"`
+	IsMonitored     bool   `json:"isMonitored"`
+	Branch          string `json:"branch,omitempty"`
+	TargetReference string `json:"targetReference,omitempty"`
+	Tags            Tags   `json:"tags"`
 }
 
-// Projects is a collection of idividual Project objects which is a package
+// Projects is a collection of individual Project objects which is a package
 // that is actively tracked by Snyk.
 type Projects = []Project
 
