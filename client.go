@@ -679,8 +679,6 @@ func (c *Client) OrganizationImportProject(ctx context.Context, orgID, integrati
 
 	callBackURL := ""
 
-	fmt.Println(string(jsonBytes))
-
 	err = c.RawQuery(ctx, "POST", fmt.Sprintf("org/%s/integrations/%s/import", orgID, integrationID), nil, body, &callBackURL)
 	if err != nil {
 		return "", err
