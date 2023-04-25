@@ -367,6 +367,7 @@ type Project struct {
 		Email    string `json:"email"`
 	} `json:"owner"`
 	BrowseUrl       string `json:"browseUrl,omitempty"`
+	RemoteRepoUrl   string `json:"remoteRepoUrl,omitempty"`
 	IsMonitored     bool   `json:"isMonitored"`
 	Branch          string `json:"branch,omitempty"`
 	TargetReference string `json:"targetReference,omitempty"`
